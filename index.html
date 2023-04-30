@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wudoku</title>
+        <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
+        <link rel="stylesheet" href="./css/index.css" />
+    </head>
+
+    <body>
+        <div id="wudoku" class="in">
+            <h1>Wudoku</h1>
+            <p>
+                This is sudoku in C compiled to WASM.<br />
+                To control cursor use WASD, to open number use key from 1 to 9.
+            </p>
+            <canvas id="app-sudoku" />
+        </div>
+
+        <script type="module">
+            import { startSudoku } from './js/script.js';
+            import { printf_env } from './js/printf.js';
+            startSudoku(printf_env);
+        </script>
+    </body>
+</html>

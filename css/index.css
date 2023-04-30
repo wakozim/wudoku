@@ -1,0 +1,28 @@
+body {
+    background-color: #181818; 
+}
+
+h1, h2, p {
+    color: #FFFFFF;
+}
+
+div.in {
+    content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    flex-wrap: wrap;
+    vertical-align: middle;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.in > div {
+    padding: 0.2rem;
+    font-size: 45;
+    color: white; 
+}
