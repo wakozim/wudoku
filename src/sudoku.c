@@ -197,7 +197,7 @@ void init_game()
 {
     generate_field(); 
 
-    open_random_cells(FIELD_CAP - 1);
+    open_random_cells(20);
 }
 
 
