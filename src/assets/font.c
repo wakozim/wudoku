@@ -69,7 +69,7 @@ static char sudoku_glyphs[128][SUDOKU_FONT_HEIGHT][SUDOKU_FONT_WIDTH] = {
     ['i'] = {
         {0, 0, 1, 0, 0},
         {0, 0, 0, 0, 0},
-        {0, 0, 1, 0, 0},
+        {0, 1, 1, 0, 0},
         {0, 0, 1, 0, 0},
         {0, 0, 1, 0, 0},
         {0, 0, 1, 0, 0},
