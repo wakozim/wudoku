@@ -60,6 +60,24 @@ const CANVAS_HEIGHT = iota++;
 const CANVAS_STRIDE = iota++;
 const CANVAS_SIZE   = iota++;
 
+
+function getKeyPressed(w, key) {
+    if (key == 'KeyW') {
+        return 10;
+    } else if (key == 'KeyS') {
+        return 11; 
+    } else if (key == 'KeyA') {
+        return 12; 
+    } else if (key == 'KeyD') {
+        return 13; 
+    } else if (key.startsWith('Digit')) {
+        return Number(key[5]); 
+    } else if (key.startsWith('Numpad')) {
+        return Number(key[6]); 
+    }
+
+}
+
 export async function startSudoku(printf_env) {
     
    const app = document.getElementById(`app-sudoku`);
@@ -90,8 +108,8 @@ export async function startSudoku(printf_env) {
     w.instance.exports.init_game();
 
     document.addEventListener('keydown', (e) => {
-        w.instance.exports.keydown(e.key.charCodeAt());
-        if (e.key == 'r' || e.key == 'R') {
+        w.instance.exports.keydown(getKeyPressed(w, e.code));
+        if (e.code == 'KeyR') {
             w.instance.exports.reset_field();
         }
         w.instance.exports.render_field(heap_base);

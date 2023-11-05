@@ -35,6 +35,21 @@
 #define SELECTED_TEXT_COLOR (ROSEWATER) 
 
 
+#define DIGIT_1 1
+#define DIGIT_2 2
+#define DIGIT_3 3
+#define DIGIT_4 4
+#define DIGIT_5 5
+#define DIGIT_6 6
+#define DIGIT_7 7
+#define DIGIT_8 8
+#define DIGIT_9 9
+#define KEY_W   10
+#define KEY_S   11
+#define KEY_A   12
+#define KEY_D   13
+
+
 int rand(void);
 
 
@@ -405,65 +420,31 @@ void keydown(int key)
 {
     if (state != PLAY)
         return;
-
-    /* handle number press */
-    if (key >= 49 && key <= 57)
-    {
-        if (visible_field[cursor] != FALSE) 
+    
+    if (key == KEY_W) {
+        if (cursor - FIELD_WIDTH >= 0)
+            cursor -= FIELD_WIDTH;
+    } else if (key == KEY_S) {
+        if (cursor + FIELD_WIDTH < FIELD_CAP)
+            cursor += FIELD_WIDTH;
+    } else if (key == KEY_A) {
+        if (cursor - 1 >= 0 && (cursor - 1) % FIELD_WIDTH != FIELD_WIDTH - 1)
+            cursor -= 1;
+    } else if (key == KEY_D) {
+        if (cursor + 1 < FIELD_CAP && (cursor + 1) % FIELD_WIDTH != 0)
+            cursor += 1;
+    } else if (key >= DIGIT_1 && key <= DIGIT_9) {
+         if (visible_field[cursor] != FALSE) 
             return;
 
-        int number = key - '0';
-        if (field[cursor] == number)
-        {
+        int number = key;
+        if (field[cursor] == number) {
             visible_field[cursor] = TRUE;
             update_state(OPEN_CELL);
-        }
-        else
-        {
+        } else {
             hearts -= 1;
             update_state(MISTAKE);
         }
-        return;
-    }
-
-    /* handle WASD press */
-    switch (key)
-    {
-    case 87: /* w */ 
-    case 119: /* W */ 
-    case 1094: /* ц */ 
-    case 1062: /* Ц */ 
-    {
-        if (cursor - FIELD_WIDTH >= 0)
-            cursor -= FIELD_WIDTH;
-        break;
-    }
-    case 97: /* a */
-    case 65: /* A */
-    case 1092: /* ф */
-    case 1060: /* Ф */
-    {
-        if (cursor - 1 >= 0 && (cursor - 1) % FIELD_WIDTH != FIELD_WIDTH - 1)
-            cursor -= 1;
-        break;
-    }
-    case 115: /* s */
-    case 83: /* S */
-    case 1099: /* ы */
-    case 1067: /* Ы */
-    {
-        if (cursor + FIELD_WIDTH < FIELD_CAP)
-            cursor += FIELD_WIDTH;
-        break;
-    }
-    case 100: /* d */
-    case 68: /* D */
-    case 1074: /* в */
-    case 1042: /* В */
-    {
-        if (cursor + 1 < FIELD_CAP && (cursor + 1) % FIELD_WIDTH != 0)
-            cursor += 1;
-        break;
-    }
-    }
+        return;   
+    } 
 }
