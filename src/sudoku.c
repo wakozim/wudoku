@@ -53,7 +53,7 @@ typedef enum {
     WIN
 } state_t;
 
-state_t state = PLAY;
+static state_t state = PLAY;
 
 
 typedef enum {
@@ -85,7 +85,6 @@ int is_save(int cell, int num)
                if (field[(start_row + y) * FIELD_WIDTH + start_col + x] == num)
                   return FALSE;  
     return TRUE;
-
 }
 
 
@@ -161,7 +160,7 @@ void generate_field()
 
                     int cell_y = cell_cord / 3,
                         cell_x = cell_cord % 3,
-                        cell = ((y + cell_y) * FIELD_WIDTH) + x + cell_x;
+                        cell   = ((y + cell_y) * FIELD_WIDTH) + x + cell_x;
 
                     if (field[cell] != 0) {
                         checked_cells[cell_cord] = 1;
@@ -186,26 +185,27 @@ void open_random_cells(int count)
 
     for (int i = 0; i < count; i++)
     {
-        int rand_cell = rand() % FIELD_CAP;
-        while (visible_field[rand_cell] != FALSE)
-            rand_cell = rand() % FIELD_CAP;
+        int cell = rand() % FIELD_CAP;
+        while (visible_field[cell] != FALSE)
+            cell = rand() % FIELD_CAP;
 
-        visible_field[rand_cell] = TRUE;
+        visible_field[cell] = TRUE;
     }
 }
 
 void init_game()
 {
+    clear_field();
     generate_field(); 
     open_random_cells(30);
+    hearts = 3;
+    state = PLAY;
 }
 
 void reset_field()
 {
     clear_field();
     init_game();    
-    hearts = 3;
-    state = PLAY;
 }
 
 
