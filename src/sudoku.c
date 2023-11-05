@@ -223,7 +223,7 @@ void reset_field()
     init_game();    
 }
 
-
+// TODO: Rewrite this shit
 Olivec_Canvas render_field()
 {
     Olivec_Canvas oc = olivec_canvas(pixels, OC_WIDTH, OC_HEIGHT, OC_WIDTH);
