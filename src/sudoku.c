@@ -395,23 +395,18 @@ Olivec_Canvas render_field()
 
 void update_state(action_t action)
 {
-    switch(action)
-    {
-    case MISTAKE:
-    {
-        if (hearts == 0)
-            state = LOSE;
-        break;
-    }
-    case OPEN_CELL:
-    {
-        for (int i = 0; i < FIELD_CAP; i++)
-            if (visible_field[i] == FALSE)
-                return;
-        state = WIN;
-    }
-    default:
-        break;
+    switch(action) {
+        case MISTAKE:
+            if (hearts == 0)
+                state = LOSE;
+            break;
+        case OPEN_CELL:
+            for (int i = 0; i < FIELD_CAP; i++)
+                if (visible_field[i] == FALSE)
+                    return;
+            state = WIN;
+        default:
+            break;
     }
 }
 
