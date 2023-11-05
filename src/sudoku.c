@@ -100,8 +100,10 @@ int is_square_checked(int cells[FIELD_WIDTH])
 
 void clear_field(void)
 {
-    for (int i = 0; i < FIELD_CAP; i++)
+    for (int i = 0; i < FIELD_CAP; i++) {
         field[i] = 0;
+        visible_field[i] = FALSE;
+    }
 }
 
 
@@ -192,12 +194,18 @@ void open_random_cells(int count)
     }
 }
 
-
 void init_game()
 {
     generate_field(); 
-
     open_random_cells(30);
+}
+
+void reset_field()
+{
+    clear_field();
+    init_game();    
+    hearts = 3;
+    state = PLAY;
 }
 
 

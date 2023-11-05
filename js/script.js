@@ -91,6 +91,9 @@ export async function startSudoku(printf_env) {
 
     document.addEventListener('keydown', (e) => {
         w.instance.exports.keydown(e.key.charCodeAt());
+        if (e.key == 'r' || e.key == 'R') {
+            w.instance.exports.reset_field();
+        }
         w.instance.exports.render_field(heap_base);
         renderCanvas(app, ctx, heap_base, buffer); 
     });
