@@ -62,13 +62,13 @@ const CANVAS_SIZE   = iota++;
 
 
 function getKeyPressed(w, key) {
-    if (key == 'KeyW') {
+    if (key == 'KeyW' || key == 'ArrowUp') {
         return 10;
-    } else if (key == 'KeyS') {
+    } else if (key == 'KeyS' || key == 'ArrowDown') {
         return 11; 
-    } else if (key == 'KeyA') {
+    } else if (key == 'KeyA' || key == 'ArrowLeft') {
         return 12; 
-    } else if (key == 'KeyD') {
+    } else if (key == 'KeyD' || key == 'ArrowRight') {
         return 13; 
     } else if (key.startsWith('Digit')) {
         return Number(key[5]); 
