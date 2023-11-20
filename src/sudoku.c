@@ -85,7 +85,7 @@ typedef enum {
 } Difficulty;
 
 static Difficulty difficulty;
-int opened_cells_counts[DIFFICULTY_COUNT] = {30, 20, 15};
+int opened_cells_counts[DIFFICULTY_COUNT] = {38, 30, 23};
 
 
 typedef enum {
