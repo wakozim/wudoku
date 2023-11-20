@@ -3,6 +3,10 @@
 #include "olive.c"
 
 #include "themes/frappe.c"
+#include "themes/mocha.c"
+#include "themes/latte.c"
+#include "themes/macchiato.c"
+
 #include "assets/heart.c"
 #include "assets/font.c"
 
@@ -25,15 +29,20 @@
 #define OC_HEIGHT ((CELL_SIZE * FIELD_HEIGHT) + (SEP_SIZE * SEP_COUNT) + (CELL_SEP_COUNT * CELL_SEP_SIZE) + TOP_MARGIN)
 
 
-#define BACKGROUND_COLOR    (BASE)
-#define SEP_COLOR           (SURFACE2)
-#define CELL_SEP_COLOR      (SURFACE1)
-#define CURSOR_COLOR        (OVERLAY2)
-#define CURSOR_SIMILAR      (OVERLAY1) 
-#define SUB_CURSOR_COLOR    (OVERLAY0)
-#define BASE_TEXT_COLOR     (ROSEWATER)
-#define SELECTED_TEXT_COLOR (ROSEWATER) 
-
+int32_t BACKGROUND_COLOR    = (FRAPPE_BASE);
+int32_t SEP_COLOR           = (FRAPPE_SURFACE2);
+int32_t CELL_SEP_COLOR      = (FRAPPE_SURFACE1);
+int32_t CURSOR_COLOR        = (FRAPPE_OVERLAY2);
+int32_t CURSOR_SIMILAR      = (FRAPPE_OVERLAY1);
+int32_t SUB_CURSOR_COLOR    = (FRAPPE_OVERLAY0);
+int32_t BASE_TEXT_COLOR     = (FRAPPE_ROSEWATER);
+int32_t SELECTED_TEXT_COLOR = (FRAPPE_ROSEWATER);
+int32_t WIN_TEXT_COLOR      = (FRAPPE_GREEN);
+int32_t LOSE_TEXT_COLOR     = (FRAPPE_RED);
+int32_t HEART_CONTOUR       = (FRAPPE_CRUST);
+int32_t HEART_RED           = (FRAPPE_RED);
+int32_t LAVENDER            = (FRAPPE_LAVENDER);
+int32_t MANTLE              = (FRAPPE_MANTLE);
 
 #define DIGIT_1 1
 #define DIGIT_2 2
@@ -52,7 +61,6 @@
 
 int rand(void);
 
-
 static uint32_t pixels[OC_WIDTH*OC_HEIGHT];
 
 static int field[FIELD_WIDTH*FIELD_HEIGHT] = {0};
@@ -60,6 +68,24 @@ static int visible_field[FIELD_WIDTH*FIELD_HEIGHT] = {0};
 
 static int cursor = 0;
 static int hearts = 3;
+
+typedef enum {
+    FRAPPE = 0,
+    LATTE,
+    MACCHIATO,
+    MOCHA 
+} Colorscheme;
+
+
+typedef enum {
+    EASY = 0,
+    MEDIUM,
+    HARD,
+    DIFFICULTY_COUNT
+} Difficulty;
+
+static Difficulty difficulty;
+int opened_cells_counts[DIFFICULTY_COUNT] = {30, 20, 15};
 
 
 typedef enum {
@@ -69,7 +95,6 @@ typedef enum {
 } state_t;
 
 static state_t state = PLAY;
-
 
 typedef enum {
     NOTHING,
@@ -193,8 +218,10 @@ void generate_field()
     }
 }
 
-void open_random_cells(int count)
+void open_random_cells()
 {
+    int count = opened_cells_counts[difficulty];  
+
     for (int i = 0; i < FIELD_CAP; i++)
         visible_field[i] = FALSE;
 
@@ -212,7 +239,7 @@ void init_game()
 {
     clear_field();
     generate_field(); 
-    open_random_cells(30);
+    open_random_cells();
     hearts = 3;
     state = PLAY;
 }
@@ -221,6 +248,78 @@ void reset_field()
 {
     clear_field();
     init_game();    
+}
+
+void change_difficulty(Difficulty dif) 
+{
+    difficulty = dif;  
+    init_game();
+}
+
+void change_colorscheme(Colorscheme cs) 
+{
+    if (cs == FRAPPE) {
+        BACKGROUND_COLOR    = (FRAPPE_BASE);
+        SEP_COLOR           = (FRAPPE_SURFACE2);
+        CELL_SEP_COLOR      = (FRAPPE_SURFACE1);
+        CURSOR_COLOR        = (FRAPPE_OVERLAY2);
+        CURSOR_SIMILAR      = (FRAPPE_OVERLAY1);
+        SUB_CURSOR_COLOR    = (FRAPPE_OVERLAY0);
+        BASE_TEXT_COLOR     = (FRAPPE_ROSEWATER);
+        SELECTED_TEXT_COLOR = (FRAPPE_ROSEWATER);
+        WIN_TEXT_COLOR      = (FRAPPE_GREEN);
+        LOSE_TEXT_COLOR     = (FRAPPE_RED);
+        HEART_CONTOUR       = (FRAPPE_CRUST);
+        HEART_RED           = (FRAPPE_RED);
+        LAVENDER            = (FRAPPE_LAVENDER);
+        MANTLE              = (FRAPPE_MANTLE);
+    } else if (cs == LATTE) {
+        BACKGROUND_COLOR    = (LATTE_BASE);
+        SEP_COLOR           = (LATTE_SURFACE2);
+        CELL_SEP_COLOR      = (LATTE_SURFACE1);
+        CURSOR_COLOR        = (LATTE_OVERLAY2);
+        CURSOR_SIMILAR      = (LATTE_OVERLAY1);
+        SUB_CURSOR_COLOR    = (LATTE_OVERLAY0);
+        BASE_TEXT_COLOR     = (LATTE_ROSEWATER);
+        SELECTED_TEXT_COLOR = (LATTE_ROSEWATER);
+        WIN_TEXT_COLOR      = (LATTE_GREEN);
+        LOSE_TEXT_COLOR     = (LATTE_RED);
+        HEART_CONTOUR       = (LATTE_CRUST);
+        HEART_RED           = (LATTE_RED);
+        LAVENDER            = (LATTE_LAVENDER);
+        MANTLE              = (LATTE_MANTLE);
+    } else if (cs == MOCHA) {
+        BACKGROUND_COLOR    = (MOCHA_BASE);
+        SEP_COLOR           = (MOCHA_SURFACE2);
+        CELL_SEP_COLOR      = (MOCHA_SURFACE1);
+        CURSOR_COLOR        = (MOCHA_OVERLAY2);
+        CURSOR_SIMILAR      = (MOCHA_OVERLAY1);
+        SUB_CURSOR_COLOR    = (MOCHA_OVERLAY0);
+        BASE_TEXT_COLOR     = (MOCHA_ROSEWATER);
+        SELECTED_TEXT_COLOR = (MOCHA_ROSEWATER);
+        WIN_TEXT_COLOR      = (MOCHA_GREEN);
+        LOSE_TEXT_COLOR     = (MOCHA_RED);
+        HEART_CONTOUR       = (MOCHA_CRUST);
+        HEART_RED           = (MOCHA_RED);
+        LAVENDER            = (MOCHA_LAVENDER);
+        MANTLE              = (MOCHA_MANTLE);
+    } else if (cs == MACCHIATO) {
+        BACKGROUND_COLOR    = (MACCHIATO_BASE);
+        SEP_COLOR           = (MACCHIATO_SURFACE2);
+        CELL_SEP_COLOR      = (MACCHIATO_SURFACE1);
+        CURSOR_COLOR        = (MACCHIATO_OVERLAY2);
+        CURSOR_SIMILAR      = (MACCHIATO_OVERLAY1);
+        SUB_CURSOR_COLOR    = (MACCHIATO_OVERLAY0);
+        BASE_TEXT_COLOR     = (MACCHIATO_ROSEWATER);
+        SELECTED_TEXT_COLOR = (MACCHIATO_ROSEWATER);
+        WIN_TEXT_COLOR      = (MACCHIATO_GREEN);
+        LOSE_TEXT_COLOR     = (MACCHIATO_RED);
+        HEART_CONTOUR       = (MACCHIATO_CRUST);
+        HEART_RED           = (MACCHIATO_RED);
+        LAVENDER            = (MACCHIATO_LAVENDER);
+        MANTLE              = (MACCHIATO_MANTLE);
+    }
+
 }
 
 // TODO: Rewrite this shit
@@ -233,15 +332,16 @@ Olivec_Canvas render_field()
 
     /* draw hearts */
     { 
-        for (int i = 0; i < heart_height*heart_width; i++)
-            if (heart_pixels[i] == 0x00000000)
+        uint32_t heart_pixels[HEART_WIDTH*HEART_HEIGHT];
+        for (int i = 0; i < HEART_HEIGHT*HEART_WIDTH; i++)
+            if (heart_template[i] == 0x00000000)
                 heart_pixels[i] = BACKGROUND_COLOR;
-            else if (heart_pixels[i] == 0xFF000000)
-                heart_pixels[i] = CRUST;
-            else if (heart_pixels[i] == 0xFF0000FF)
-                heart_pixels[i] = RED;
+            else if (heart_template[i] == 0xFF000000)
+                heart_pixels[i] = HEART_CONTOUR;
+            else if (heart_template[i] == 0xFF0000FF)
+                heart_pixels[i] = HEART_RED;
 
-        Olivec_Canvas heart_sprite = olivec_canvas(heart_pixels, heart_width, heart_height, heart_width);
+        Olivec_Canvas heart_sprite = olivec_canvas(heart_pixels, HEART_WIDTH, HEART_HEIGHT, HEART_WIDTH);
         int start_x = 5;
         int margin = 45;
         int y = 5;
@@ -374,7 +474,7 @@ Olivec_Canvas render_field()
         int font_size = 5;
         int text_width = sudoku_font.width * font_size * 10; 
         int text_height = sudoku_font.height * font_size;
-        olivec_text(oc, "You lose:(", (OC_WIDTH - text_width) /2 , (OC_HEIGHT - text_height) / 2, sudoku_font, font_size, RED);
+        olivec_text(oc, "You lose:(", (OC_WIDTH - text_width) /2 , (OC_HEIGHT - text_height) / 2, sudoku_font, font_size, LOSE_TEXT_COLOR);
     } 
     else if (state == WIN)
     {
@@ -386,7 +486,7 @@ Olivec_Canvas render_field()
         int font_size = 5;
         int text_width = sudoku_font.width * font_size * 9; 
         int text_height = sudoku_font.height * font_size;
-        olivec_text(oc, "You win:)", (OC_WIDTH - text_width) /2 , (OC_HEIGHT - text_height) / 2, sudoku_font, font_size, GREEN);
+        olivec_text(oc, "You win:)", (OC_WIDTH - text_width) /2 , (OC_HEIGHT - text_height) / 2, sudoku_font, font_size, WIN_TEXT_COLOR);
     }
 
     return oc;

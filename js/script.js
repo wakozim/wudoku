@@ -1,4 +1,18 @@
-import {printf_init} from "./printf.js";
+function cstrlen(mem, ptr) {
+    let len = 0;
+    while (mem[ptr] != 0) {
+        len++;
+        ptr++;
+    }
+    return len;
+}
+
+function cstr_by_ptr(mem_buffer, ptr) {
+    const mem = new Uint8Array(mem_buffer);
+    const len = cstrlen(mem, ptr);
+    const bytes = new Uint8Array(mem_buffer, ptr, len);
+    return new TextDecoder().decode(bytes);
+}
 
 function readCanvasFromMemory(memory_buffer, canvas_ptr)
 {
@@ -78,8 +92,31 @@ function getKeyPressed(w, key) {
 
 }
 
-export async function startSudoku(printf_env) {
-    
+function changeDifficulty() {
+    var difficulty = document.getElementById("difficulty").value;
+    w.instance.exports.change_difficulty(Number(difficulty));
+
+    const heap_base = w.instance.exports.__heap_base.value;
+    w.instance.exports.render_field(heap_base);
+    const app = document.getElementById(`app-sudoku`);
+    const ctx = app.getContext("2d");
+    const buffer = w.instance.exports.memory.buffer;
+    renderCanvas(app, ctx, heap_base, buffer);
+}
+
+function changeColorscheme() {
+    var colorscheme = document.getElementById("colorscheme").value;
+    w.instance.exports.change_colorscheme(Number(colorscheme));
+
+    const heap_base = w.instance.exports.__heap_base.value;
+    w.instance.exports.render_field(heap_base);
+    const app = document.getElementById(`app-sudoku`);
+    const ctx = app.getContext("2d");
+    const buffer = w.instance.exports.memory.buffer;
+    renderCanvas(app, ctx, heap_base, buffer);
+}
+
+async function startSudoku() {
    const app = document.getElementById(`app-sudoku`);
     if (app === null) {
         console.error(`Could not find element app-sudoku. Stop loading sudoku.`);
@@ -91,17 +128,13 @@ export async function startSudoku(printf_env) {
         return;
     }
 
-    let paused = true;
-    sec.addEventListener("mouseenter", () => paused = false);
-    sec.addEventListener("mouseleave", () => paused = true);
-
-    Object.assign(libm, printf_env);
+    //Object.assign(libm, printf_env);
     const ctx = app.getContext("2d");
-    const w = await WebAssembly.instantiateStreaming(fetch('./wasm/wudoku.wasm'), {
+    w = await WebAssembly.instantiateStreaming(fetch('./wasm/wudoku.wasm'), {
         "env": makeEnvironment(libm),
     });
     
-    printf_init(w.instance.exports.memory);
+    //printf_init(w.instance.exports.memory);
     const heap_base = w.instance.exports.__heap_base.value;
     const buffer = w.instance.exports.memory.buffer;
     
@@ -119,3 +152,6 @@ export async function startSudoku(printf_env) {
     w.instance.exports.render_field(heap_base);
     renderCanvas(app, ctx, heap_base, buffer); 
 }
+
+var w = null;
+startSudoku();

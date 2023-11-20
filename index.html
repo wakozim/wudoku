@@ -7,19 +7,31 @@
     </head>
 
     <body>
+
         <div id="wudoku" class="in">
-            <h1>Wudoku</h1>
+            <h1>
+                Wudoku
+            </h1>
             <p>
                 This is sudoku in C compiled to WASM.<br />
                 To control cursor use WASD or arrows, to open number use keys from 1 to 9.
             </p>
+            <div class="difficulty">
+                <select onchange="changeDifficulty()" name="difficulty" id="difficulty">
+                    <option value=0>Easy</option>
+                    <option value=1>Medium</option>
+                    <option value=2>Hard</option>
+                </select>
+                
+                <select onchange="changeColorscheme()" name="colorscheme" id="colorscheme">
+                    <option value=0>Frappe</option>
+                    <option value=1>Latte</option>
+                    <option value=2>Macchiato</option>
+                    <option value=3>Mocha</option>
+                </select>
+            </div>
             <canvas id="app-sudoku" />
-        </div>
-
-        <script type="module">
-            import { startSudoku } from './js/script.js';
-            import { printf_env } from './js/printf.js';
-            startSudoku(printf_env);
-        </script>
+            <script src="./js/script.js"></script>
+        </div> 
     </body>
 </html>
