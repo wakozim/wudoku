@@ -116,6 +116,17 @@ function changeColorscheme() {
     renderCanvas(app, ctx, heap_base, buffer);
 }
 
+function restartGame() {
+   w.instance.exports.reset_field();
+
+    const heap_base = w.instance.exports.__heap_base.value;
+    w.instance.exports.render_field(heap_base);
+    const app = document.getElementById(`app-sudoku`);
+    const ctx = app.getContext("2d");
+    const buffer = w.instance.exports.memory.buffer;
+    renderCanvas(app, ctx, heap_base, buffer);
+ 
+}
 async function startSudoku() {
    const app = document.getElementById(`app-sudoku`);
     if (app === null) {
