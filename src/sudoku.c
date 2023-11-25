@@ -468,8 +468,8 @@ Olivec_Canvas render_field()
     {
         int width = OC_WIDTH;
         int height = 200;
-        olivec_rect(oc, (OC_WIDTH - width) / 2, (OC_HEIGHT - height) / 2, width, height, MANTLE); 
-        olivec_frame(oc, (OC_WIDTH - width) / 2, (OC_HEIGHT - height) / 2, width, height, 5, LAVENDER); 
+        olivec_rect(oc, 0, (OC_HEIGHT - height) / 2, width, height, MANTLE); 
+        olivec_frame(oc, 0 + (float)5/2, (OC_HEIGHT - height) / 2, width - (float)5/2, height, 5, LAVENDER); 
         
         int font_size = 5;
         int text_width = sudoku_font.width * font_size * 10; 
