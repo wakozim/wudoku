@@ -469,12 +469,12 @@ Olivec_Canvas render_field()
         int width = OC_WIDTH;
         int height = 200;
         olivec_rect(oc, 0, (OC_HEIGHT - height) / 2, width, height, MANTLE); 
-        olivec_frame(oc, 0 + (float)5/2, (OC_HEIGHT - height) / 2, width - (float)5/2, height, 5, LAVENDER); 
+        olivec_frame(oc, 0 + (float)5/2, (OC_HEIGHT - height) / 2, width - 1, height, 5, LAVENDER); 
         
         int font_size = 5;
-        int text_width = sudoku_font.width * font_size * 10; 
-        int text_height = sudoku_font.height * font_size;
-        olivec_text(oc, "You lose:(", (OC_WIDTH - text_width) /2 , (OC_HEIGHT - text_height) / 2, sudoku_font, font_size, LOSE_TEXT_COLOR);
+        const char *lose_text = "You lose :(";
+        Olivec_Vector2 text_size = olivec_measure_text(lose_text, sudoku_font, font_size);
+        olivec_text(oc, "You lose:(", (OC_WIDTH - text_size.x) /2 , (OC_HEIGHT - text_size.y) / 2, sudoku_font, font_size, LOSE_TEXT_COLOR);
     } 
     else if (state == WIN)
     {
@@ -484,9 +484,9 @@ Olivec_Canvas render_field()
         olivec_frame(oc, (OC_WIDTH - width) / 2, (OC_HEIGHT - height) / 2, width, height, 5, LAVENDER); 
         
         int font_size = 5;
-        int text_width = sudoku_font.width * font_size * 9; 
-        int text_height = sudoku_font.height * font_size;
-        olivec_text(oc, "You win:)", (OC_WIDTH - text_width) /2 , (OC_HEIGHT - text_height) / 2, sudoku_font, font_size, WIN_TEXT_COLOR);
+        const char *win_text = "You win :)";
+        Olivec_Vector2 text_size = olivec_measure_text(win_text, sudoku_font, font_size);
+        olivec_text(oc, win_text, (OC_WIDTH - text_size.x) /2 , (OC_HEIGHT - text_size.y) / 2, sudoku_font, font_size, WIN_TEXT_COLOR);
     }
 
     return oc;

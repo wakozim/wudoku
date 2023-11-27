@@ -328,6 +328,11 @@ typedef struct {
     size_t stride;
 } Olivec_Canvas;
 
+typedef struct {
+    int x;
+    int y;
+} Olivec_Vector2;
+
 #define OLIVEC_CANVAS_NULL ((Olivec_Canvas) {0})
 #define OLIVEC_PIXEL(oc, x, y) (oc).pixels[(y)*(oc).stride + (x)]
 
@@ -349,6 +354,8 @@ OLIVECDEF void olivec_triangle3z(Olivec_Canvas oc, int x1, int y1, int x2, int y
 OLIVECDEF void olivec_triangle3uv(Olivec_Canvas oc, int x1, int y1, int x2, int y2, int x3, int y3, float tx1, float ty1, float tx2, float ty2, float tx3, float ty3, float z1, float z2, float z3, Olivec_Canvas texture);
 OLIVECDEF void olivec_triangle3uv_bilinear(Olivec_Canvas oc, int x1, int y1, int x2, int y2, int x3, int y3, float tx1, float ty1, float tx2, float ty2, float tx3, float ty3, float z1, float z2, float z3, Olivec_Canvas texture);
 OLIVECDEF void olivec_text(Olivec_Canvas oc, const char *text, int x, int y, Olivec_Font font, size_t size, uint32_t color);
+
+OLIVECDEF Olivec_Vector2 olivec_measure_text(const char *text, Olivec_Font font, size_t glyph_size);
 OLIVECDEF void olivec_sprite_blend(Olivec_Canvas oc, int x, int y, int w, int h, Olivec_Canvas sprite);
 OLIVECDEF void olivec_sprite_copy(Olivec_Canvas oc, int x, int y, int w, int h, Olivec_Canvas sprite);
 OLIVECDEF void olivec_sprite_copy_bilinear(Olivec_Canvas oc, int x, int y, int w, int h, Olivec_Canvas sprite);
@@ -835,6 +842,16 @@ OLIVECDEF void olivec_text(Olivec_Canvas oc, const char *text, int tx, int ty, O
             }
         }
     }
+}
+
+OLIVECDEF Olivec_Vector2 olivec_measure_text(const char *text, Olivec_Font font, size_t glyph_size)
+{
+    Olivec_Vector2 text_size = {0};
+    size_t text_len = 0;
+    for (text_len = 0; *text; ++text, ++text_len);
+    text_size.x = font.width * glyph_size * text_len;
+    text_size.y = font.height * glyph_size;
+    return text_size;
 }
 
 OLIVECDEF void olivec_sprite_blend(Olivec_Canvas oc, int x, int y, int w, int h, Olivec_Canvas sprite)
