@@ -94,7 +94,7 @@ function getKeyPressed(w, key) {
 
 function refreshCanvas() {
     const heap_base = w.instance.exports.__heap_base.value;
-    w.instance.exports.render_field(heap_base);
+    w.instance.exports.render_game(heap_base);
     const app = document.getElementById(`app-sudoku`);
     const ctx = app.getContext("2d");
     const buffer = w.instance.exports.memory.buffer;
@@ -147,11 +147,11 @@ async function startSudoku() {
         if (e.code == 'KeyR') {
             w.instance.exports.reset_field();
         }
-        w.instance.exports.render_field(heap_base);
+        w.instance.exports.render_game(heap_base);
         renderCanvas(app, ctx, heap_base, buffer); 
     });
      
-    w.instance.exports.render_field(heap_base);
+    w.instance.exports.render_game(heap_base);
     renderCanvas(app, ctx, heap_base, buffer); 
 }
 

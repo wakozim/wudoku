@@ -323,7 +323,7 @@ void change_colorscheme(Colorscheme cs)
 }
 
 // TODO: Rewrite this shit
-Olivec_Canvas render_field()
+Olivec_Canvas render_game()
 {
     Olivec_Canvas oc = olivec_canvas(pixels, OC_WIDTH, OC_HEIGHT, OC_WIDTH);
     olivec_fill(oc, BACKGROUND_COLOR);
