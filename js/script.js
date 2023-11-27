@@ -92,41 +92,32 @@ function getKeyPressed(w, key) {
 
 }
 
-function changeDifficulty() {
-    var difficulty = document.getElementById("difficulty").value;
-    w.instance.exports.change_difficulty(Number(difficulty));
-
+function refreshCanvas() {
     const heap_base = w.instance.exports.__heap_base.value;
     w.instance.exports.render_field(heap_base);
     const app = document.getElementById(`app-sudoku`);
     const ctx = app.getContext("2d");
     const buffer = w.instance.exports.memory.buffer;
     renderCanvas(app, ctx, heap_base, buffer);
+}
+
+function changeDifficulty() {
+    var difficulty = document.getElementById("difficulty").value;
+    w.instance.exports.change_difficulty(Number(difficulty));
+    refreshCanvas()
 }
 
 function changeColorscheme() {
     var colorscheme = document.getElementById("colorscheme").value;
     w.instance.exports.change_colorscheme(Number(colorscheme));
-
-    const heap_base = w.instance.exports.__heap_base.value;
-    w.instance.exports.render_field(heap_base);
-    const app = document.getElementById(`app-sudoku`);
-    const ctx = app.getContext("2d");
-    const buffer = w.instance.exports.memory.buffer;
-    renderCanvas(app, ctx, heap_base, buffer);
+    refreshCanvas()
 }
 
 function restartGame() {
    w.instance.exports.reset_field();
-
-    const heap_base = w.instance.exports.__heap_base.value;
-    w.instance.exports.render_field(heap_base);
-    const app = document.getElementById(`app-sudoku`);
-    const ctx = app.getContext("2d");
-    const buffer = w.instance.exports.memory.buffer;
-    renderCanvas(app, ctx, heap_base, buffer);
- 
+   refreshCanvas()
 }
+
 async function startSudoku() {
    const app = document.getElementById(`app-sudoku`);
     if (app === null) {
