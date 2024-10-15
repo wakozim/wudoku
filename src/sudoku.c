@@ -1,4 +1,3 @@
-#include "printf.c"
 #define OLIVEC_IMPLEMENTATION
 #include "olive.c"
 
@@ -22,7 +21,7 @@
 
 #define CELL_SEP_COUNT 6
 #define CELL_SEP_SIZE 2
-  
+
 #define TOP_MARGIN 50
 #define CELL_SIZE 60
 #define OC_WIDTH  ((CELL_SIZE * FIELD_WIDTH) + (SEP_SIZE * SEP_COUNT) + (CELL_SEP_COUNT * CELL_SEP_SIZE) + 0)
@@ -44,20 +43,19 @@ int32_t HEART_RED           = (FRAPPE_RED);
 int32_t LAVENDER            = (FRAPPE_LAVENDER);
 int32_t MANTLE              = (FRAPPE_MANTLE);
 
-#define DIGIT_1 1
-#define DIGIT_2 2
-#define DIGIT_3 3
-#define DIGIT_4 4
-#define DIGIT_5 5
-#define DIGIT_6 6
-#define DIGIT_7 7
-#define DIGIT_8 8
-#define DIGIT_9 9
-#define KEY_W   10
-#define KEY_S   11
-#define KEY_A   12
-#define KEY_D   13
-
+#define DIGIT_1   1
+#define DIGIT_2   2
+#define DIGIT_3   3
+#define DIGIT_4   4
+#define DIGIT_5   5
+#define DIGIT_6   6
+#define DIGIT_7   7
+#define DIGIT_8   8
+#define DIGIT_9   9
+#define MOVE_UP    10
+#define MOVE_DOWN  11
+#define MOVE_LEFT  12
+#define MOVE_RIGHT 13
 
 int rand(void);
 
@@ -73,7 +71,7 @@ typedef enum {
     FRAPPE = 0,
     LATTE,
     MACCHIATO,
-    MOCHA 
+    MOCHA
 } Colorscheme;
 
 
@@ -116,14 +114,14 @@ int is_save(int cell, int num)
     for (int y = 0; y < FIELD_WIDTH; y++)
         if (field[y*FIELD_WIDTH + col] == num)
             return FALSE;
-    
+
     /* check square */
     int start_row = row - row % 3,
         start_col = col - col % 3;
     for (int y = 0; y < 3; y++)
         for (int x = 0; x < 3; x++)
                if (field[(start_row + y) * FIELD_WIDTH + start_col + x] == num)
-                  return FALSE;  
+                  return FALSE;
     return TRUE;
 }
 
@@ -135,7 +133,7 @@ int is_square_checked(int cells[FIELD_WIDTH])
             return FALSE;
     return TRUE;
 }
- 
+
 
 void clear_field(void)
 {
@@ -152,8 +150,8 @@ void clear_field_from_number(int number)
         if (field[i] == number)
             field[i] = 0;
 }
- 
 
+#if 0
 void print_field()
 {
     for (int i = 0; i < FIELD_CAP; i++)
@@ -164,37 +162,37 @@ void print_field()
     }
     printf("\n");
 }
+#endif
 
-
-void generate_field()
+void generate_field(void)
 {
     int back_count = 0;
-  
-    for (int i = 1; i <= 9; i++) 
+
+    for (int i = 1; i <= 9; i++)
     {
-        if (back_count >= 2) { 
+        if (back_count >= 2) {
             clear_field();
             back_count = 0;
             i = 1;
         }
 
         int is_leave = FALSE;
-        for (int y = 0; y < 9 && !is_leave; y+=3) 
+        for (int y = 0; y < 9 && !is_leave; y+=3)
         {
-            for (int x = 0; x < 9 && !is_leave; x+=3) 
+            for (int x = 0; x < 9 && !is_leave; x+=3)
             {
-                int checked_cells[FIELD_WIDTH] = {0}; 
-                while (!is_leave) 
+                int checked_cells[FIELD_WIDTH] = {0};
+                while (!is_leave)
                 {
                     int cell_cord = rand() % 9;
-                    if (is_square_checked(checked_cells) == TRUE) {  
+                    if (is_square_checked(checked_cells) == TRUE) {
                         clear_field_from_number(i);
                         i -= 1;
                         back_count += 1;
                         is_leave = TRUE;
-                        break; 
+                        break;
                     }
-             
+
                     if (checked_cells[cell_cord] != 0)
                         continue;
 
@@ -218,9 +216,9 @@ void generate_field()
     }
 }
 
-void open_random_cells()
+void open_random_cells(void)
 {
-    int count = opened_cells_counts[difficulty];  
+    int count = opened_cells_counts[difficulty];
 
     for (int i = 0; i < FIELD_CAP; i++)
         visible_field[i] = FALSE;
@@ -235,28 +233,29 @@ void open_random_cells()
     }
 }
 
-void init_game()
+void init_game(void)
 {
     clear_field();
-    generate_field(); 
+    generate_field();
     open_random_cells();
     hearts = 3;
     state = PLAY;
 }
 
-void reset_field()
+void reset_field(void)
 {
     clear_field();
-    init_game();    
-}
-
-void change_difficulty(Difficulty dif) 
-{
-    difficulty = dif;  
     init_game();
 }
 
-void change_colorscheme(Colorscheme cs) 
+void change_difficulty(Difficulty dif)
+{
+    difficulty = dif;
+    init_game();
+}
+
+// TODO: Rewrite this shit
+void change_colorscheme(Colorscheme cs)
 {
     if (cs == FRAPPE) {
         BACKGROUND_COLOR    = (FRAPPE_BASE);
@@ -323,15 +322,12 @@ void change_colorscheme(Colorscheme cs)
 }
 
 // TODO: Rewrite this shit
-Olivec_Canvas render_game()
+void render_play_screen(Olivec_Canvas *oc)
 {
-    Olivec_Canvas oc = olivec_canvas(pixels, OC_WIDTH, OC_HEIGHT, OC_WIDTH);
-    olivec_fill(oc, BACKGROUND_COLOR);
-    
     #define SQUARE_SIZE (3 * CELL_SIZE + SEP_SIZE + 2 * CELL_SEP_SIZE)
 
     /* draw hearts */
-    { 
+    {
         uint32_t heart_pixels[HEART_WIDTH*HEART_HEIGHT];
         for (int i = 0; i < HEART_HEIGHT*HEART_WIDTH; i++)
             if (heart_template[i] == 0x00000000)
@@ -346,13 +342,13 @@ Olivec_Canvas render_game()
         int margin = 45;
         int y = 5;
         for (int i = 0; i < hearts; i++)
-            olivec_sprite_copy(oc, i * margin + start_x, y, 40, 40, heart_sprite);
+            olivec_sprite_copy((*oc), i * margin + start_x, y, 40, 40, heart_sprite);
     }
 
-    /* draw cursor */ 
+    /* draw cursor */
     {
         int cursor_line = cursor / FIELD_WIDTH;
-        int cursor_column = cursor % FIELD_WIDTH; 
+        int cursor_column = cursor % FIELD_WIDTH;
 
         int cursor_vert_square = cursor_line / 3;
         int cursor_hor_square = cursor_column / 3;
@@ -364,18 +360,18 @@ Olivec_Canvas render_game()
         {
             int hor_square = i / 3;
             int x = hor_square * SQUARE_SIZE + i % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE;
-            olivec_rect(oc, x, cursor_y, CELL_SIZE, CELL_SIZE, SUB_CURSOR_COLOR);
+            olivec_rect((*oc), x, cursor_y, CELL_SIZE, CELL_SIZE, SUB_CURSOR_COLOR);
         }
-        
+
         for (int i = 0; i < FIELD_HEIGHT; i++)
         {
             int vert_square = i / 3;
             int y = vert_square * SQUARE_SIZE + i % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE + TOP_MARGIN;
-            olivec_rect(oc, cursor_x, y, CELL_SIZE, CELL_SIZE, SUB_CURSOR_COLOR);
+            olivec_rect((*oc), cursor_x, y, CELL_SIZE, CELL_SIZE, SUB_CURSOR_COLOR);
         }
-        
-        int start_line = cursor_line - cursor_line % 3, 
-            start_column = cursor_column - cursor_column % 3; 
+
+        int start_line = cursor_line - cursor_line % 3,
+            start_column = cursor_column - cursor_column % 3;
         for (int line = start_line; line < start_line + 3; line++)
         {
             for (int column = start_column; column < start_column + 3; column++)
@@ -384,7 +380,7 @@ Olivec_Canvas render_game()
                 int hor_square = column / 3;
                 int x = hor_square * SQUARE_SIZE + column % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE;
                 int y = vert_square * SQUARE_SIZE + line % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE + TOP_MARGIN;
-                olivec_rect(oc, x, y, CELL_SIZE, CELL_SIZE, SUB_CURSOR_COLOR);
+                olivec_rect((*oc), x, y, CELL_SIZE, CELL_SIZE, SUB_CURSOR_COLOR);
             }
         }
 
@@ -394,19 +390,19 @@ Olivec_Canvas render_game()
             {
                 int cell = line * FIELD_WIDTH + column;
                 if (!visible_field[cell] || !visible_field[cursor])
-                    continue; 
+                    continue;
 
                 if (field[cell] != field[cursor])
-                    continue; 
+                    continue;
 
                 int vert_square = line / 3;
                 int hor_square = column / 3;
                 int x = hor_square * SQUARE_SIZE + column % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE;
                 int y = vert_square * SQUARE_SIZE + line % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE + TOP_MARGIN;
-                olivec_rect(oc, x, y, CELL_SIZE, CELL_SIZE, CURSOR_SIMILAR);
+                olivec_rect((*oc), x, y, CELL_SIZE, CELL_SIZE, CURSOR_SIMILAR);
             }
         }
-        olivec_rect(oc, cursor_x, cursor_y, CELL_SIZE, CELL_SIZE, CURSOR_COLOR);
+        olivec_rect((*oc), cursor_x, cursor_y, CELL_SIZE, CELL_SIZE, CURSOR_COLOR);
     }
 
     /* draw numbers */
@@ -414,7 +410,7 @@ Olivec_Canvas render_game()
     int font_height = olivec_default_font.height * font_size;
     int font_width = olivec_default_font.width * font_size;
     char *labels[10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-    uint32_t text_colors[2] = {BASE_TEXT_COLOR, SELECTED_TEXT_COLOR}; 
+    uint32_t text_colors[2] = {BASE_TEXT_COLOR, SELECTED_TEXT_COLOR};
 
     for (int line = 0; line < FIELD_HEIGHT; line++)
     {
@@ -424,14 +420,14 @@ Olivec_Canvas render_game()
 
             if (visible_field[cell] == FALSE)
                 continue;
-            
+
             uint32_t text_color = text_colors[field[cell] == field[cursor] * visible_field[cursor]];
             int vert_square = line / 3;
-            int hor_square = column / 3; 
-            int x = (hor_square * SQUARE_SIZE) + column % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE + ((CELL_SIZE - font_width) / 2) + (font_width / 5);  
+            int hor_square = column / 3;
+            int x = (hor_square * SQUARE_SIZE) + column % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE + ((CELL_SIZE - font_width) / 2) + (font_width / 5);
             int y = (vert_square * SQUARE_SIZE) + line % 3 * (CELL_SIZE + CELL_SEP_SIZE) + SEP_SIZE + (CELL_SIZE - font_height) / 2 + TOP_MARGIN;
 
-            olivec_text(oc, labels[field[cell]], x, y, olivec_default_font, font_size, text_color);
+            olivec_text((*oc), labels[field[cell]], x, y, olivec_default_font, font_size, text_color);
         }
     }
 
@@ -443,11 +439,11 @@ Olivec_Canvas render_game()
             /* vertical */
             int x = i * (CELL_SEP_SIZE + CELL_SIZE) + (SEP_SIZE + CELL_SIZE) + s * SQUARE_SIZE;
             int height = (FIELD_HEIGHT * CELL_SIZE) + (SEP_COUNT * SEP_SIZE) + (CELL_SEP_COUNT * CELL_SEP_SIZE);
-            olivec_rect(oc, x, TOP_MARGIN, CELL_SEP_SIZE, height, CELL_SEP_COLOR); 
+            olivec_rect((*oc), x, TOP_MARGIN, CELL_SEP_SIZE, height, CELL_SEP_COLOR);
             /* horizontal */
             int y = i * (CELL_SEP_SIZE + CELL_SIZE) + (SEP_SIZE + CELL_SIZE) + s * (3 * CELL_SIZE + SEP_SIZE + 2 * CELL_SEP_SIZE) + TOP_MARGIN;
             int width= (FIELD_HEIGHT * CELL_SIZE) + (SEP_COUNT * SEP_SIZE) + (CELL_SEP_COUNT * CELL_SEP_SIZE);
-            olivec_rect(oc, 0, y, width, CELL_SEP_SIZE, CELL_SEP_COLOR); 
+            olivec_rect((*oc), 0, y, width, CELL_SEP_SIZE, CELL_SEP_COLOR);
         }
     }
 
@@ -457,36 +453,55 @@ Olivec_Canvas render_game()
         /* vertical */
         int x = i * ((CELL_SIZE * 3) + SEP_SIZE + (CELL_SEP_SIZE * 2));
         int height = (FIELD_HEIGHT * CELL_SIZE) + (SEP_COUNT * SEP_SIZE) + (CELL_SEP_COUNT * CELL_SEP_SIZE);
-        olivec_rect(oc, x, TOP_MARGIN, SEP_SIZE, height, SEP_COLOR); 
+        olivec_rect((*oc), x, TOP_MARGIN, SEP_SIZE, height, SEP_COLOR);
         /* horizontal */
         int y = i * ((CELL_SIZE * 3) + SEP_SIZE + (CELL_SEP_SIZE * 2)) + TOP_MARGIN;
         int width = (FIELD_WIDTH * CELL_SIZE) + (SEP_COUNT * SEP_SIZE) + (CELL_SEP_COUNT * CELL_SEP_SIZE);
-        olivec_rect(oc, 0, y, width, SEP_SIZE, SEP_COLOR); 
+        olivec_rect((*oc), 0, y, width, SEP_SIZE, SEP_COLOR);
     }
-    
-    if (state  == LOSE)
-    {
+}
+
+void render_win_screen(Olivec_Canvas *oc) {
         int width = OC_WIDTH;
         int height = 200;
-        olivec_rect(oc, 0, (OC_HEIGHT - height) / 2, width, height, MANTLE); 
-        olivec_frame(oc, 0 + (float)5/2, (OC_HEIGHT - height) / 2, width - 1, height, 5, LAVENDER); 
-        
-        int font_size = 5;
-        const char *lose_text = "You lose :(";
-        Olivec_Vector2 text_size = olivec_measure_text(lose_text, sudoku_font, font_size);
-        olivec_text(oc, "You lose:(", (OC_WIDTH - text_size.x) /2 , (OC_HEIGHT - text_size.y) / 2, sudoku_font, font_size, LOSE_TEXT_COLOR);
-    } 
-    else if (state == WIN)
-    {
-        int width = OC_WIDTH;
-        int height = 200;
-        olivec_rect(oc, (OC_WIDTH - width) / 2, (OC_HEIGHT - height) / 2, width, height, MANTLE); 
-        olivec_frame(oc, (OC_WIDTH - width) / 2, (OC_HEIGHT - height) / 2, width, height, 5, LAVENDER); 
-        
+        olivec_rect((*oc), (OC_WIDTH - width) / 2, (OC_HEIGHT - height) / 2, width, height, MANTLE);
+        olivec_frame((*oc), (OC_WIDTH - width) / 2, (OC_HEIGHT - height) / 2, width, height, 5, LAVENDER);
+
         int font_size = 5;
         const char *win_text = "You win :)";
         Olivec_Vector2 text_size = olivec_measure_text(win_text, sudoku_font, font_size);
-        olivec_text(oc, win_text, (OC_WIDTH - text_size.x) /2 , (OC_HEIGHT - text_size.y) / 2, sudoku_font, font_size, WIN_TEXT_COLOR);
+        olivec_text((*oc), win_text, (OC_WIDTH - text_size.x) /2 , (OC_HEIGHT - text_size.y) / 2, sudoku_font, font_size, WIN_TEXT_COLOR);
+}
+
+void render_lose_screen(Olivec_Canvas *oc) {
+        int width = OC_WIDTH;
+        int height = OC_HEIGHT;
+        olivec_frame((*oc), 0 + (float)5/2, (OC_HEIGHT - height) / 2, width - 1, height, 5, LAVENDER);
+
+        int font_size = 5;
+        const char *lose_text = "You lose :(";
+        Olivec_Vector2 text_size = olivec_measure_text(lose_text, sudoku_font, font_size);
+        olivec_text((*oc), "You lose:(", (OC_WIDTH - text_size.x) /2 , (OC_HEIGHT - text_size.y) / 2, sudoku_font, font_size, LOSE_TEXT_COLOR);
+}
+
+Olivec_Canvas render_game(void)
+{
+    Olivec_Canvas oc = olivec_canvas(pixels, OC_WIDTH, OC_HEIGHT, OC_WIDTH);
+    olivec_fill(oc, BACKGROUND_COLOR);
+
+    switch (state) {
+        case PLAY: {
+            render_play_screen(&oc);
+            break;
+        }
+        case WIN: {
+            render_win_screen(&oc);
+            break;
+        }
+        case LOSE: {
+            render_lose_screen(&oc);
+            break;
+        }
     }
 
     return oc;
@@ -510,26 +525,25 @@ void update_state(action_t action)
     }
 }
 
-
 void keydown(int key)
 {
     if (state != PLAY)
         return;
-    
-    if (key == KEY_W) {
+
+    if (key == MOVE_UP) {
         if (cursor - FIELD_WIDTH >= 0)
             cursor -= FIELD_WIDTH;
-    } else if (key == KEY_S) {
+    } else if (key == MOVE_DOWN) {
         if (cursor + FIELD_WIDTH < FIELD_CAP)
             cursor += FIELD_WIDTH;
-    } else if (key == KEY_A) {
+    } else if (key == MOVE_LEFT) {
         if (cursor - 1 >= 0 && (cursor - 1) % FIELD_WIDTH != FIELD_WIDTH - 1)
             cursor -= 1;
-    } else if (key == KEY_D) {
+    } else if (key == MOVE_RIGHT) {
         if (cursor + 1 < FIELD_CAP && (cursor + 1) % FIELD_WIDTH != 0)
             cursor += 1;
     } else if (key >= DIGIT_1 && key <= DIGIT_9) {
-         if (visible_field[cursor] != FALSE) 
+        if (visible_field[cursor] != FALSE)
             return;
 
         int number = key;
@@ -540,6 +554,6 @@ void keydown(int key)
             hearts -= 1;
             update_state(MISTAKE);
         }
-        return;   
-    } 
+        return;
+    }
 }

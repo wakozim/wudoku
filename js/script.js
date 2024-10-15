@@ -114,8 +114,8 @@ function changeColorscheme() {
 }
 
 function restartGame() {
-   w.instance.exports.reset_field();
-   refreshCanvas()
+    w.instance.exports.reset_field();
+    refreshCanvas()
 }
 
 async function startSudoku() {
@@ -130,13 +130,11 @@ async function startSudoku() {
         return;
     }
 
-    //Object.assign(libm, printf_env);
     const ctx = app.getContext("2d");
     w = await WebAssembly.instantiateStreaming(fetch('./wasm/wudoku.wasm'), {
         "env": makeEnvironment(libm),
     });
     
-    //printf_init(w.instance.exports.memory);
     const heap_base = w.instance.exports.__heap_base.value;
     const buffer = w.instance.exports.memory.buffer;
     
