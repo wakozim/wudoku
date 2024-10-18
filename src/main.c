@@ -5,35 +5,33 @@
 #include <raylib.h>
 #include <math.h>
 
+
+int keys[][3] = {
+    {KEY_ONE,   KEY_KP_1,  1}, 
+    {KEY_TWO,   KEY_KP_2,  2}, 
+    {KEY_THREE, KEY_KP_3,  3}, 
+    {KEY_FOUR,  KEY_KP_4,  4}, 
+    {KEY_FIVE,  KEY_KP_5,  5}, 
+    {KEY_SIX,   KEY_KP_6,  6}, 
+    {KEY_SEVEN, KEY_KP_7,  7}, 
+    {KEY_EIGHT, KEY_KP_8,  8}, 
+    {KEY_NINE,  KEY_KP_9,  9}, 
+    {KEY_W,     KEY_UP,    10}, 
+    {KEY_S,     KEY_DOWN,  11}, 
+    {KEY_A,     KEY_LEFT,  12}, 
+    {KEY_D,     KEY_RIGHT, 13}, 
+};
+
+
 void process_input(void)
 {
-    if (IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1)) {
-        keydown(DIGIT_1);  
-    } else if (IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2)) {
-        keydown(DIGIT_2); 
-    } else if (IsKeyPressed(KEY_THREE) || IsKeyPressed(KEY_KP_3)) {
-        keydown(DIGIT_3);
-    } else if (IsKeyPressed(KEY_FOUR) || IsKeyPressed(KEY_KP_4)) {
-        keydown(DIGIT_4);
-    } else if (IsKeyPressed(KEY_FIVE) || IsKeyPressed(KEY_KP_5)) {
-        keydown(DIGIT_5);
-    } else if (IsKeyPressed(KEY_SIX) || IsKeyPressed(KEY_KP_6)) {
-        keydown(DIGIT_6);
-    } else if (IsKeyPressed(KEY_SEVEN) || IsKeyPressed(KEY_KP_7)) {
-        keydown(DIGIT_7);
-    } else if (IsKeyPressed(KEY_EIGHT) || IsKeyPressed(KEY_KP_8)) {
-        keydown(DIGIT_8);
-    } else if (IsKeyPressed(KEY_NINE) || IsKeyPressed(KEY_KP_9)) {
-        keydown(DIGIT_9);
-    } else if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) {
-        keydown(MOVE_UP); 
-    } else if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
-        keydown(MOVE_RIGHT); 
-    } else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) {
-        keydown(MOVE_DOWN); 
-    } else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
-        keydown(MOVE_LEFT); 
-    } else if (IsKeyPressed(KEY_R)) {
+    for (size_t i = 0; i <= sizeof(keys); i++) {
+        if (IsKeyPressed(keys[i][0]) || IsKeyPressed(keys[i][1])) {
+            keydown(keys[i][2]);
+        }       
+    }
+    
+    if (IsKeyPressed(KEY_R)) {
         reset_field();
     }
 }
