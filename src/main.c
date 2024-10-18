@@ -1,8 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include "sudoku.c"
 #include <raylib.h>
-
+#include <math.h>
 
 void process_input(void)
 {
@@ -32,6 +33,8 @@ void process_input(void)
         keydown(MOVE_DOWN); 
     } else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
         keydown(MOVE_LEFT); 
+    } else if (IsKeyPressed(KEY_R)) {
+        reset_field();
     }
 }
 
@@ -42,22 +45,30 @@ int main(void)
     InitWindow(OC_WIDTH, OC_HEIGHT, "Wudoku native");
     SetTargetFPS(60);
     init_game();
+    change_colorscheme(MOCHA); 
+    
+    Shader shader = LoadShader(NULL, "invert_color.fs"); 
+
+    Image image = GenImageColor(OC_WIDTH, OC_HEIGHT, WHITE);
+    Texture texture = LoadTextureFromImage(image);
+    UnloadImage(image);
+
     while (!WindowShouldClose()) {
         BeginDrawing();
-            for (int y = 0; y < OC_HEIGHT; y++) {
-                for (int x = 0; x < OC_WIDTH; x++) {
-                    uint32_t color = pixels[y*OC_WIDTH+x];
-                    char r = OLIVEC_RED(color);
-                    char g = OLIVEC_GREEN(color);
-                    char b = OLIVEC_BLUE(color);
-                    char a = OLIVEC_ALPHA(color);
-                    DrawPixel(x, y, CLITERAL(Color){r,g,b,a});
-                }
-            } 
-            process_input(); 
             render_game();
+            process_input(); 
+            UpdateTexture(texture, &pixels);
+
+            int x = GetScreenWidth()/2 - texture.width/2;
+            int y = GetScreenHeight()/2 - texture.height/2;
+            BeginShaderMode(shader);
+                DrawTexture(texture, x, y, RED);
+            EndShaderMode();
+
         EndDrawing(); 
     }
+    UnloadTexture(texture);
+    UnloadShader(shader);
     CloseWindow();
     return 0;
 }
